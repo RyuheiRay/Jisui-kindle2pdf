@@ -2,19 +2,17 @@ import os
 import sys
 import time
 from pathlib import Path
-
 import pyautogui
 import pygetwindow as gw
-from PIL import Image, ImageEnhance
+from PIL import Image, ImageEnhance, ImageGrab
 from screeninfo import get_monitors
 
-from PIL import Image
 from PyPDF2 import PdfWriter, PdfReader
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 
 # スクリーンショット画面検索文字列を定義
-KINDLE_NAME = 'Kindle for PC'   # Kindle for PC
+KINDLE_NAME = 'Kindle for PC'  # Kindle for PC
 
 # 出力パス、ファイル名を定義
 OUTPUT_PATH = Path(os.path.dirname(sys.argv[0])) / 'result'
@@ -27,8 +25,8 @@ OUTPUT_H = OUTPUT_TARGET['height']
 OUTPUT_W = OUTPUT_TARGET['width']
 
 # PDF変換モードを定義
-PDF_CONVERT_MODE_PIL = 1        # PILを使用してPDFに変換
-PDF_CONVERT_MODE_PYPDF = 2      # PyPDF2を使用してPDFに変換
+PDF_CONVERT_MODE_PIL = 1  # PILを使用してPDFに変換
+PDF_CONVERT_MODE_PYPDF = 2  # PyPDF2を使用してPDFに変換
 PDF_CONVERT_MODE_REPORTLAB = 3  # reportlabを使用してPDFに変換
 
 # デフォルトのPDF変換モードを設定
@@ -51,13 +49,13 @@ def kindle2pdf():
         print(f"Window with title '{KINDLE_NAME}' not found.")
         return
 
-    # ウィンドウを前面に移動
-    window.activate()
-
     # スクリーンの幅と高さを取得
     screen_width, screen_height = get_display_resolution(KINDLE_NAME)
 
     print("Capturing... Don't touch PC")
+
+    # ウィンドウを前面に移動
+    window.activate()
 
     # ウインドウを全画面表示
     is_full_screen = (window.width == screen_width and window.height == screen_height)
@@ -84,7 +82,7 @@ def kindle2pdf():
 
     previous_screenshot = None
     while True:
-        current_screenshot = pyautogui.screenshot(region=kindle_region)
+        current_screenshot = capture_kindle_screenshot()
         if previous_screenshot:
             if previous_screenshot == current_screenshot:
                 break
@@ -97,7 +95,7 @@ def kindle2pdf():
     scale_factor = OUTPUT_H / screen_height
     previous_screenshot = None
     while True:
-        current_screenshot = pyautogui.screenshot(region=kindle_region)
+        current_screenshot = capture_kindle_screenshot()
         if previous_screenshot:
             if previous_screenshot == current_screenshot:
                 # 最後のスクリーンショット保存
@@ -132,6 +130,17 @@ def kindle2pdf():
 
     print(f"\nConversion complete!")
     print(f"{idx} pages converted to {output_file_name}.")
+
+
+def capture_kindle_screenshot():
+    # Kindleのウィンドウ領域を取得
+    window_rect = gw.getWindowsWithTitle(KINDLE_NAME)[0]
+    # クロップ領域を設定
+    scale_factor = window_rect.height / OUTPUT_H
+    region_left = window_rect.left + int(window_rect.width / 2 - OUTPUT_W * scale_factor / 2)
+    region_right = region_left + int(OUTPUT_W * scale_factor)
+    kindle_region = (region_left, window_rect.top, region_right, window_rect.bottom)
+    return ImageGrab.grab(bbox=kindle_region, all_screens=True)
 
 
 def get_display_resolution(window_title):
@@ -195,6 +204,7 @@ def convert_png_to_pdf_reportlab(folder_path, output_file, quality=90):
             c.drawImage(img_path, 0, 0, width=letter[0], height=letter[1])
             c.showPage()
     c.save()
+
 
 def delete_tmp_files():
     # フォルダが存在するかどうかを確認
@@ -269,5 +279,3 @@ def get_next_output_filename(folder_path, base_filename):
     next_number = max_number + 1
     # 出力ファイル名を生成して返す
     return f"{base_filename.split('.')[0]}_{str(next_number).zfill(3)}.pdf"
-
-
