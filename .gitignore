@@ -1,0 +1,103 @@
+# Project specific
+release/
+result/
+*.pdf
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+# 通常は以下の行を有効にすることでPyInstallerが生成するファイルを無視します
+# /dist/
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*,cover
+.hypothesis/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+# 注: Pipenvの場合は、Pipfile.lockをコミットすることをお勧めします
+# Pipfile.lock
+
+# Poetry
+# Poetryの場合は、pyproject.tomlとpoetry.lockをコミットすることをお勧めします
+# pyproject.toml
+# poetry.lock
+
+# pipenvのプロジェクトファイルの作成ディレクトリ
+.venv/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# PyCharm files
+.idea/
+*.iml
+*.ipr
+*.iws
