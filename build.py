@@ -3,7 +3,7 @@ import shutil
 import subprocess
 from pathlib import Path
 
-EXE_NAME = 'kindle2pdf'
+EXE_NAME = 'Jisui-kindle2pdf'
 PROJECT_PATH = Path(__file__).parent
 DIST_PATH = PROJECT_PATH / 'dist'
 
