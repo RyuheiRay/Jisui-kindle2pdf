@@ -12,7 +12,7 @@ import webbrowser
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Text, Button, PhotoImage
 
-from src.kindle2pdf import kindle2pdf, OUTPUT_PATH
+from src.kindle2pdf import kindle2pdf, get_kindle_region, OUTPUT_PATH
 
 CURRENT_PATH = Path(os.path.dirname(sys.argv[0]))
 ASSETS_PATH = CURRENT_PATH / Path(r"./assets/frame0")

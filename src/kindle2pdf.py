@@ -37,17 +37,17 @@ CONTRAST_FACTOR = 1.7
 
 
 def kindle2pdf():
-    print(f"Start...for {OUTPUT_TARGET['target']}({OUTPUT_H}x{OUTPUT_W})")
-
-    # 必要なパスを作成
-    OUTPUT_PATH.mkdir(parents=False, exist_ok=True)
-
     # Kindleウィンドウを見つける
     try:
         window = gw.getWindowsWithTitle(KINDLE_NAME)[0]
     except IndexError:
         print(f"Please open '{KINDLE_NAME}' and prepare for capture.")
         return
+
+    print(f"Start...for {OUTPUT_TARGET['target']}({OUTPUT_H}x{OUTPUT_W})")
+
+    # 必要なパスを作成
+    OUTPUT_PATH.mkdir(parents=False, exist_ok=True)
 
     # スクリーンの幅と高さを取得
     screen_width, screen_height = get_display_resolution(KINDLE_NAME)
@@ -63,14 +63,6 @@ def kindle2pdf():
         pyautogui.press('f11')
         time.sleep(4)
         is_full_screen = True
-
-    # ウィンドウの座標を取得
-    scale_factor = screen_height / OUTPUT_H
-    region_top = 0
-    region_left = int(screen_width / 2 - OUTPUT_W * scale_factor / 2)
-    region_width = int(OUTPUT_W * scale_factor)
-    region_height = screen_height
-    kindle_region = (region_left, region_top, region_width, region_height)
 
     # Kindleの表紙に移動
     pyautogui.hotkey('ctrl', 'g')
@@ -132,7 +124,7 @@ def kindle2pdf():
     print(f"{idx} pages converted to {output_file_name}.")
 
 
-def capture_kindle_screenshot():
+def get_kindle_region():
     # Kindleのウィンドウ領域を取得
     window_rect = gw.getWindowsWithTitle(KINDLE_NAME)[0]
     # クロップ領域を設定
@@ -140,7 +132,11 @@ def capture_kindle_screenshot():
     region_left = window_rect.left + int(window_rect.width / 2 - OUTPUT_W * scale_factor / 2)
     region_right = region_left + int(OUTPUT_W * scale_factor)
     kindle_region = (region_left, window_rect.top, region_right, window_rect.bottom)
-    return ImageGrab.grab(bbox=kindle_region, all_screens=True)
+    return kindle_region
+
+
+def capture_kindle_screenshot():
+    return ImageGrab.grab(bbox=get_kindle_region(), all_screens=True)
 
 
 def get_display_resolution(window_title):
