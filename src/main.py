@@ -6,6 +6,8 @@ import os
 import sys
 import tkinter as tk
 from pathlib import Path
+import webbrowser
+
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Text, Button, PhotoImage
@@ -25,7 +27,12 @@ def redirect_stdout_to_text_widget(text_widget):
             self.widget.insert(tk.END, text)
             self.widget.see(tk.END)  # スクロールを最下部に移動する
             self.widget.update_idletasks()  # テキストエリアの再描画
+
     sys.stdout = StdoutRedirector(text_widget)
+
+
+def open_url_in_default_browser(url):
+    webbrowser.open(url)
 
 
 def open_kindle_app():
@@ -34,7 +41,10 @@ def open_kindle_app():
     if os.path.exists(kindle_path):
         os.startfile(kindle_path)
     else:
-        print("Kindleアプリが見つかりませんでした。")
+        print("The Kindle app could not be found. Please download and install it from the official website.")
+        print("Opening browser...")
+        open_url_in_default_browser(
+            "https://www.amazon.com/b?node=16571048011&pd_rd_w=EeJQf&content-id=amzn1.sym.1db6d1f3-4b02-435e-876d-049cf9d28e33:amzn1.sym.1db6d1f3-4b02-435e-876d-049cf9d28e33&pf_rd_p=1db6d1f3-4b02-435e-876d-049cf9d28e33&pf_rd_r=YYJQAQJCAGS3FASKH32D&pd_rd_wg=O842Q&pd_rd_r=fe07e7bc-9ee0-4889-ac1e-5723fa80c9a3&qid=1711163128&ref_=sxts_snpl_2_1_1db6d1f3-4b02-435e-876d-049cf9d28e33")
 
 
 def execute():

@@ -46,7 +46,7 @@ def kindle2pdf():
     try:
         window = gw.getWindowsWithTitle(KINDLE_NAME)[0]
     except IndexError:
-        print(f"Window with title '{KINDLE_NAME}' not found.")
+        print(f"Please open '{KINDLE_NAME}' and prepare for capture.")
         return
 
     # スクリーンの幅と高さを取得
