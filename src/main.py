@@ -43,6 +43,9 @@ def execute():
 
 
 def open_out_put():
+    # resultディレクトリの作成
+    if not os.path.exists(OUTPUT_PATH):
+        os.makedirs(OUTPUT_PATH)
     os.startfile(OUTPUT_PATH)
 
 
