@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -38,8 +39,9 @@ CONTRAST_FACTOR = 1.7
 
 def kindle2pdf():
     # Kindleウィンドウを見つける
+    kindle_window = None
     try:
-        window = gw.getWindowsWithTitle(KINDLE_NAME)[0]
+        kindle_window = gw.getWindowsWithTitle(KINDLE_NAME)[0]
     except IndexError:
         print(f"Please open '{KINDLE_NAME}' and prepare for capture.")
         return
@@ -55,10 +57,10 @@ def kindle2pdf():
     print("Capturing... Don't touch PC")
 
     # ウィンドウを前面に移動
-    window.activate()
+    kindle_window.activate()
 
     # ウインドウを全画面表示
-    is_full_screen = (window.width == screen_width and window.height == screen_height)
+    is_full_screen = (kindle_window.width == screen_width and kindle_window.height == screen_height)
     if not is_full_screen:
         pyautogui.press('f11')
         time.sleep(4)
@@ -106,7 +108,7 @@ def kindle2pdf():
 
     # PDFに変換
     print("Converting to pdf...")
-    output_file_name = get_next_output_filename(OUTPUT_PATH, OUTPUT_FILE_NAME)
+    output_file_name = get_next_output_filename(OUTPUT_PATH, get_kindle_title(kindle_window) + '.pdf')
     output_file_path = OUTPUT_PATH / output_file_name
     if PDF_CONVERT_MODE == PDF_CONVERT_MODE_PIL:
         convert_png_to_pdf_pil(OUTPUT_PATH, output_file_path)
@@ -192,6 +194,21 @@ def convert_png_to_pdf_pyfpdf(folder_path, output_file, quality=90):
             output_pdf.write(f)
 
 
+def get_kindle_title(kindle_windows):
+    # Kindle for PCのウィンドウを取得
+    if not kindle_windows:
+        return OUTPUT_FILE_NAME
+
+    # 最初のKindle for PCウィンドウのタイトルを取得
+    kindle_window_title = kindle_windows.title
+
+    # "Kindle for PC -"の後の文字列を取得
+    pattern = re.compile(r"Kindle for PC - (.*)")
+    match = pattern.search(kindle_window_title)
+    if match:
+        return match.group(1)
+    else:
+        return None
 def convert_png_to_pdf_reportlab(folder_path, output_file, quality=90):
     c = canvas.Canvas(str(output_file), pagesize=letter)
     for filename in sorted(os.listdir(folder_path)):
