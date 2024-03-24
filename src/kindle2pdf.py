@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -39,7 +40,7 @@ CONTRAST_FACTOR = 1.7
 def kindle2pdf():
     # Kindleウィンドウを見つける
     try:
-        window = gw.getWindowsWithTitle(KINDLE_NAME)[0]
+        kindle_window = gw.getWindowsWithTitle(KINDLE_NAME)[0]
     except IndexError:
         print(f"Please open '{KINDLE_NAME}' and prepare for capture.")
         return
@@ -55,10 +56,10 @@ def kindle2pdf():
     print("Capturing... Don't touch PC")
 
     # ウィンドウを前面に移動
-    window.activate()
+    kindle_window.activate()
 
     # ウインドウを全画面表示
-    is_full_screen = (window.width == screen_width and window.height == screen_height)
+    is_full_screen = (kindle_window.width == screen_width and kindle_window.height == screen_height)
     if not is_full_screen:
         pyautogui.press('f11')
         time.sleep(4)
@@ -106,16 +107,16 @@ def kindle2pdf():
 
     # PDFに変換
     print("Converting to pdf...")
-    output_file_name = get_next_output_filename(OUTPUT_PATH, OUTPUT_FILE_NAME)
-    output_file_path = OUTPUT_PATH / output_file_name
+    output_file_name = get_next_output_filename(OUTPUT_PATH, convert_to_valid_filename(get_kindle_title(kindle_window) + '.pdf'))
+    print(output_file_name)
     if PDF_CONVERT_MODE == PDF_CONVERT_MODE_PIL:
-        convert_png_to_pdf_pil(OUTPUT_PATH, output_file_path)
+        convert_png_to_pdf_pil(OUTPUT_PATH, output_file_name)
     elif PDF_CONVERT_MODE == PDF_CONVERT_MODE_PYPDF:
-        convert_png_to_pdf_pyfpdf(OUTPUT_PATH, output_file_path)
+        convert_png_to_pdf_pyfpdf(OUTPUT_PATH, output_file_name)
     elif PDF_CONVERT_MODE == PDF_CONVERT_MODE_REPORTLAB:
-        convert_png_to_pdf_reportlab(OUTPUT_PATH, output_file_path)
+        convert_png_to_pdf_reportlab(OUTPUT_PATH, output_file_name)
     else:
-        convert_png_to_pdf_pil(OUTPUT_PATH, output_file_path)
+        convert_png_to_pdf_pil(OUTPUT_PATH, output_file_name)
 
     # 中間ファイルを削除
     delete_tmp_files()
@@ -168,7 +169,7 @@ def convert_png_to_pdf_pil(folder_path, output_file):
         images[0].save(folder_path / output_file, save_all=True, append_images=images[1:])
 
 
-def convert_png_to_pdf_pyfpdf(folder_path, output_file, quality=90):
+def convert_png_to_pdf_pyfpdf(folder_path, output_file):
     images = []
     for filename in sorted(os.listdir(folder_path)):
         if filename.endswith('.png'):
@@ -192,7 +193,35 @@ def convert_png_to_pdf_pyfpdf(folder_path, output_file, quality=90):
             output_pdf.write(f)
 
 
-def convert_png_to_pdf_reportlab(folder_path, output_file, quality=90):
+def convert_to_valid_filename(input_str):
+    # 不適切な文字を空白に置換する正規表現パターン
+    invalid_chars_regex = r'[\\/:*?"<>|]'
+
+    # 不適切な文字を空白に置換して、空白をアンダースコアに置換する
+    valid_filename = re.sub(invalid_chars_regex, '', input_str)
+    valid_filename = valid_filename.replace(' ', '_')
+
+    return valid_filename
+
+
+def get_kindle_title(kindle_windows):
+    # Kindle for PCのウィンドウを取得
+    if not kindle_windows:
+        return OUTPUT_FILE_NAME
+
+    # 最初のKindle for PCウィンドウのタイトルを取得
+    kindle_window_title = kindle_windows.title
+
+    # "Kindle for PC -"の後の文字列を取得
+    pattern = re.compile(r"Kindle for PC - (.*)")
+    match = pattern.search(kindle_window_title)
+    if match:
+        return match.group(1)
+    else:
+        return None
+
+
+def convert_png_to_pdf_reportlab(folder_path, output_file):
     c = canvas.Canvas(str(output_file), pagesize=letter)
     for filename in sorted(os.listdir(folder_path)):
         if filename.endswith('.png'):
