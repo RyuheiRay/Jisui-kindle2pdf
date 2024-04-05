@@ -71,7 +71,7 @@ def kindle2pdf():
     pyautogui.press('1')
     time.sleep(0.1)
     pyautogui.press('enter')
-    time.sleep(0.1)
+    time.sleep(1.0)
 
     previous_screenshot = None
     while True:
@@ -108,7 +108,6 @@ def kindle2pdf():
     # PDFに変換
     print("Converting to pdf...")
     output_file_name = get_next_output_filename(OUTPUT_PATH, convert_to_valid_filename(get_kindle_title(kindle_window) + '.pdf'))
-    print(output_file_name)
     if PDF_CONVERT_MODE == PDF_CONVERT_MODE_PIL:
         convert_png_to_pdf_pil(OUTPUT_PATH, output_file_name)
     elif PDF_CONVERT_MODE == PDF_CONVERT_MODE_PYPDF:
