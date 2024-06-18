@@ -107,7 +107,7 @@ def kindle2pdf():
 
     # PDFに変換
     print("Converting to pdf...")
-    output_file_name = get_next_output_filename(OUTPUT_PATH, convert_to_valid_filename(get_kindle_title(kindle_window) + '.pdf'))
+    output_file_name = get_next_output_filename(OUTPUT_PATH, convert_to_valid_filename(get_kindle_title(kindle_window)))
     if PDF_CONVERT_MODE == PDF_CONVERT_MODE_PIL:
         convert_png_to_pdf_pil(OUTPUT_PATH, output_file_name)
     elif PDF_CONVERT_MODE == PDF_CONVERT_MODE_PYPDF:
@@ -200,7 +200,7 @@ def convert_to_valid_filename(input_str):
     valid_filename = re.sub(invalid_chars_regex, '', input_str)
     valid_filename = valid_filename.replace(' ', '_')
 
-    return valid_filename
+    return valid_filename + '.pdf'
 
 
 def get_kindle_title(kindle_windows):
@@ -211,11 +211,10 @@ def get_kindle_title(kindle_windows):
     # 最初のKindle for PCウィンドウのタイトルを取得
     kindle_window_title = kindle_windows.title
 
-    # "Kindle for PC -"の後の文字列を取得
-    pattern = re.compile(r"Kindle for PC - (.*)")
-    match = pattern.search(kindle_window_title)
-    if match:
-        return match.group(1)
+    # " - " の位置を見つけ、その後の文字列を取得
+    dash_index = kindle_window_title.find(" - ")
+    if dash_index != -1:
+        return kindle_window_title[dash_index + 3:].strip()  # ダッシュの後の文字列を返す
     else:
         return None
 
