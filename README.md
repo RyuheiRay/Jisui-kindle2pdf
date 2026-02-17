@@ -39,3 +39,10 @@ A tool that automatically scans books displayed in Kindle for PC and generates P
 
 ## ⚠️ Disclaimer
 This tool is intended for personal use only (creating private copies of books you have purchased). Distributing or selling the generated files is strictly prohibited by law. Use this tool at your own risk.
+
+---
+
+## ❤️ Support
+If this tool has been helpful to you, please consider supporting its development! Your contributions help me maintain the project and create new features.
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/ryuheiray)
