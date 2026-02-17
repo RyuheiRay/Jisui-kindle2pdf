@@ -18,7 +18,7 @@ CURRENT_PATH = Path(os.path.dirname(sys.argv[0]))
 ASSETS_PATH = CURRENT_PATH / Path(r"./assets/frame0")
 
 # デフォルト値（ローカル実行時用）
-VERSION = "v1.0.0"
+VERSION = "v1.0.6"
 COPYRIGHT_YEAR = "2026"
 
 # GitHub Actionsでビルドされる際に環境変数から取得する設定
