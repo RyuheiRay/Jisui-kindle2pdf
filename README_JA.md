@@ -4,6 +4,8 @@ Kindle for PCで表示されている書籍を自動スキャンし、Remarkable
 
 ## 🚀 使い方
 
+![UI Image](https://github.com/RyuheiRay/Jisui-kindle2pdf/blob/master/src/assets/screenshot.png)
+
 1. **ダウンロードと準備**
    - [Releases](https://github.com/RyuheiRay/Jisui-kindle2pdf/releases) から最新の `Jisui-kindle2pdf.zip` をダウンロードして展開（解凍）します。
 

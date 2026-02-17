@@ -6,6 +6,8 @@ A tool that automatically scans books displayed in Kindle for PC and generates P
 
 ## 🚀 How to Use
 
+![UI Image](https://github.com/RyuheiRay/Jisui-kindle2pdf/blob/master/src/assets/screenshot.png)
+
 1. **Download and Setup**
    - Download the latest `Jisui-kindle2pdf.zip` from the [Releases](https://github.com/RyuheiRay/Jisui-kindle2pdf/releases) page and extract it.
 
