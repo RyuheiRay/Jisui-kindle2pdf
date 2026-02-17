@@ -26,6 +26,9 @@ jobs:
     - name: Build with PyInstaller
       run: |
         python build.py
+      env:
+        # ここでタグ名（例: v1.0.6）を環境変数として定義します
+        VERSION_STR: ${{ github.ref_name }}
 
     - name: Create Zip
       run: |
