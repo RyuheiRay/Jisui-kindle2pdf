@@ -22,9 +22,9 @@ def copy_assets_to_dist():
     try:
         # distディレクトリにリソースファイルをコピー
         shutil.copytree(assets_path, os.path.join(dist_path, 'assets'))
-        print("リソースファイルをコピーしました。")
+        print("Copying resource files...")
     except Exception as e:
-        print(f"リソースファイルのコピーに失敗しました: {e}")
+        print(f"Copying resource files failed: {e}")
 
 
 def main():
