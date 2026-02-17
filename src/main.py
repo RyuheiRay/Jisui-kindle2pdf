@@ -169,7 +169,7 @@ canvas.create_text(
     65.0,
     247.0,
     anchor="nw",
-    text="kindle2pdf  v1.0.2  Copyright © 2024",
+    text="kindle2pdf  v1.0.3  Copyright © 2026",
     fill="#000000",
     font=("Inter Bold", 11 * -1)
 )
