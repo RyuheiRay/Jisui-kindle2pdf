@@ -38,12 +38,27 @@ CONTRAST_FACTOR = 1.7
 
 
 def kindle2pdf():
-    # Kindleウィンドウを見つける
-    try:
-        kindle_window = gw.getWindowsWithTitle(KINDLE_NAME)[0]
-    except IndexError:
-        print(f"Please open '{KINDLE_NAME}' and prepare for capture.")
+    # ウィンドウの取得も部分一致に変更
+    kindle_window = None
+    for w in gw.getAllWindows():
+        if KINDLE_NAME in w.title:
+            kindle_window = w
+            break
+
+    if not kindle_window:
+        print(f"'{KINDLE_NAME}' を含むウィンドウを開いて準備してください。")
         return
+
+    try:
+        if kindle_window.isMinimized:
+            kindle_window.restore()  # 最小化されていたら元に戻す
+
+        kindle_window.activate()  # ウィンドウをアクティブにする
+        time.sleep(1)  # フォーカスが移るのを少し待つ
+    except Exception as e:
+        print(f"ウィンドウの前面化に失敗しました: {e}")
+        # activate()が失敗する場合の予備策としてクリックを試みる
+        pyautogui.click(kindle_window.left + 10, kindle_window.top + 10)
 
     print(f"Start...for {OUTPUT_TARGET['target']}({OUTPUT_H}x{OUTPUT_W})")
 
@@ -140,20 +155,29 @@ def capture_kindle_screenshot():
 
 
 def get_display_resolution(window_title):
-    # Get the window with the specified title
-    window = gw.getWindowsWithTitle(window_title)
-    if len(window) == 0:
-        print("Window with the specified title was not found.")
+    # すべてのウィンドウから、指定したタイトルを含むものを探す（部分一致）
+    target_window = None
+    for w in gw.getAllWindows():
+        if window_title in w.title:
+            target_window = w
+            break
+
+    if not target_window:
+        print(f"ウィンドウ名に '{window_title}' を含むものが見つかりませんでした。")
         return None
 
-    # Get the display resolution where the window is displayed
+    # ウィンドウの中心座標がどのモニターにあるか判定
+    center_x = target_window.left + (target_window.width // 2)
+    center_y = target_window.top + (target_window.height // 2)
+
     for monitor in get_monitors():
-        if monitor.x <= window[0].left <= monitor.x + monitor.width and \
-                monitor.y <= window[0].top <= monitor.y + monitor.height:
+        if monitor.x <= center_x <= monitor.x + monitor.width and \
+                monitor.y <= center_y <= monitor.y + monitor.height:
             return monitor.width, monitor.height
 
-    print("Could not retrieve the display resolution where the specified window is displayed.")
-    return None
+    # モニターが見つからない場合はプライマリモニターの値を返す（予備策）
+    primary = get_monitors()[0]
+    return primary.width, primary.height
 
 
 def convert_png_to_pdf_pil(folder_path, output_file):
@@ -203,21 +227,24 @@ def convert_to_valid_filename(input_str):
     return valid_filename + '.pdf'
 
 
-def get_kindle_title(kindle_windows):
-    # Kindle for PCのウィンドウを取得
-    if not kindle_windows:
+def get_kindle_title(kindle_window):
+    if not kindle_window:
         return OUTPUT_FILE_NAME
 
-    # 最初のKindle for PCウィンドウのタイトルを取得
-    kindle_window_title = kindle_windows.title
+    # ウィンドウのフルタイトルを取得
+    full_title = kindle_window.title
 
-    # " - " の位置を見つけ、その後の文字列を取得
-    dash_index = kindle_window_title.find(" - ")
-    if dash_index != -1:
-        return kindle_window_title[dash_index + 3:].strip()  # ダッシュの後の文字列を返す
-    else:
-        return None
+    # " - " で分割して、最後の要素を取得（一番右側が書籍名である可能性が高いため）
+    parts = full_title.split(" - ")
 
+    if len(parts) >= 2:
+        # 一番最後の要素を取得し、前後の空白を削除
+        title = parts[-1].strip()
+        if title:
+            return title
+
+    # もし分割に失敗したり空だった場合は、デフォルト名を返す（Noneを返さない）
+    return full_title or OUTPUT_FILE_NAME
 
 def convert_png_to_pdf_reportlab(folder_path, output_file):
     c = canvas.Canvas(str(output_file), pagesize=letter)
