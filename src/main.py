@@ -17,6 +17,14 @@ from src.kindle2pdf import kindle2pdf, get_kindle_region, OUTPUT_PATH
 CURRENT_PATH = Path(os.path.dirname(sys.argv[0]))
 ASSETS_PATH = CURRENT_PATH / Path(r"./assets/frame0")
 
+# デフォルト値（ローカル実行時用）
+VERSION = "v1.0.0"
+COPYRIGHT_YEAR = "2026"
+
+# GitHub Actionsでビルドされる際に環境変数から取得する設定
+# ビルド時に外部から VERSION_STR という名前で流し込みます
+VERSION = os.getenv("VERSION_STR", VERSION)
+
 
 def redirect_stdout_to_text_widget(text_widget):
     class StdoutRedirector:
@@ -169,7 +177,7 @@ canvas.create_text(
     65.0,
     247.0,
     anchor="nw",
-    text="kindle2pdf  v1.0.3  Copyright © 2026",
+    text=f"kindle2pdf  {VERSION}  Copyright © {COPYRIGHT_YEAR}",
     fill="#000000",
     font=("Inter Bold", 11 * -1)
 )
